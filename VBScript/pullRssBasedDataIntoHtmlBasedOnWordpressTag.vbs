@@ -39,7 +39,7 @@
 										for each dateMatch in dateMatches
 											pubDate = Replace(dateMatch.Value,"<pubDate>","")
 											pubDate = Replace(pubDate,"</pubDate>","")
-											pubDate = Left(pubDate,16) 'here, we're getting rid of the timestamp in the pubDate (we're only interested in the day).
+											pubDate = Left(pubDate,16) 'here, we're getting rid of the timestamp in the pubDate (we're only interested in the day, month, and year).
 										Next
 								dim reContent : Set reContent = new regexp
 									reContent.Pattern = "<description>.*</description>"
@@ -55,16 +55,17 @@
 											content = Replace(content,"[...]","<a href='" & link & "' title='read the full article, &ldquo;" & title & "&rdquo; on the blog'>[...]</a>") 'I like that as an indicator that there is more. This turns it into a link sending you to the blog post.
 										Next
 								response.write("<h2> <a href='" & link & "' title='read the full article, &ldquo;" & title & "&rdquo; on the blog'>" & title & "</a></h2>") 'build a header for this news/event item
-								response.write("<p><strong>" & pubDate & "</strong> " & content & "</p>")
+								response.write("<p><strong>" & pubDate & "</strong> " & content & "</p>") 'build the content for this news/event item. Uses the format of the publication date followed by the decription content.
 							Next
 						else
-							response.write("<p>Hmm&hellip; no event. That can&rsquo;t be right. Please <a href='mailto:webmaster@advisicon.com?subject=Something broke!' title='email the webmaster'>send us an email</a> to let us know that something has gone wonkey.</p>")
+							response.write("<p>Hmm&hellip; no event. That can&rsquo;t be right. Please <a href='mailto:webmaster@advisicon.com?subject=Something broke!' title='email the webmaster'>send us an email</a> to let us know that something has gone wonkey.</p>") 'builds an error message that allows the user to contact the webmaster if that first regular expression isn't found within the array. This should only happen if something is broken.
 						end if
 					next 'use a for loop to use the regular expression on the array. The output from the loop will be the line(s) containing the search pattern
 					
-					set re = nothing
-					set xmlhttp = nothing
+					set re = nothing 'resets re
+					set xmlhttp = nothing 'resets xmlhttp
+					'I should probably stick some more resets in here.
 					
 				end sub 'free up any memory used by the process
 				
-				process_html("http://www.advisiconblog.com/tag/event/feed/") 'point the subprocess to the webpage you want to access
+				process_html("http://www.advisiconblog.com/tag/event/feed/") 'point the subprocess to the webpage you want to access. I'm using the tag "event" to categorize my event content. This allows me to pull in the event tag's feed.
